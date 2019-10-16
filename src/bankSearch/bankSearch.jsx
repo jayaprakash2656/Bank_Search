@@ -274,7 +274,6 @@ class JobTemplateTable extends Component {
                         .indexOf(filter.value.toLowerCase()) !== -1
                       : true;
                   }}
-                  pivotBy={["bank_name"]}
 
                 />
 
