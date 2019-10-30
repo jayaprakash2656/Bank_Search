@@ -213,7 +213,7 @@ class JobTemplateTable extends Component {
                             />}
                            />
                           );
-                        }
+                        },
                         // Header: x => {
                         //   return (
                         //     <Checkbox
