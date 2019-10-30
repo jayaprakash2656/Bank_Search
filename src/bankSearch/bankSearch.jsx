@@ -8,6 +8,9 @@ import CardBox from '../component/CardBox/index'
 import SearchComponent from "./searchComponent";
 import { Card, CardBody, Row, Col } from 'reactstrap';
 import AutoComplete from './autoColmplete'
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Favorite from '@material-ui/icons/Favorite';
+import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 import Checkbox from '@material-ui/core/Checkbox';
 
 //Import links for Api
@@ -200,13 +203,14 @@ class JobTemplateTable extends Component {
                         Header: "Action",
                         Cell: ({ original }) => {
                           return (
-                            <Checkbox
-                              // type="checkbox"
+                          <FormControlLabel
+                              control={<Checkbox icon={<FavoriteBorder />} 
+                              checkedIcon={<Favorite />}
                               className="checkbox"
-                              indeterminate
+                              color="primary"
                               checked={this.state.selected[original.ifsc] === true}
                               onChange={() => this.toggleRow(original.ifsc)}
-                            />
+                           />
                           );
                         },
                         // Header: x => {
