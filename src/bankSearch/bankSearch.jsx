@@ -210,6 +210,7 @@ class JobTemplateTable extends Component {
                               color="primary"
                               checked={this.state.selected[original.ifsc] === true}
                               onChange={() => this.toggleRow(original.ifsc)}
+                            />}
                            />
                           );
                         }
