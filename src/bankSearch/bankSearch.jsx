@@ -212,7 +212,7 @@ class JobTemplateTable extends Component {
                               onChange={() => this.toggleRow(original.ifsc)}
                            />
                           );
-                        },
+                        //},Remove all
                         // Header: x => {
                         //   return (
                         //     <Checkbox
