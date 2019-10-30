@@ -8,6 +8,7 @@ import CardBox from '../component/CardBox/index'
 import SearchComponent from "./searchComponent";
 import { Card, CardBody, Row, Col } from 'reactstrap';
 import AutoComplete from './autoColmplete'
+import Checkbox from '@material-ui/core/Checkbox';
 
 //Import links for Api
 import links from '../apiLink.json'
@@ -16,13 +17,13 @@ import links from '../apiLink.json'
 import '../asset/style/table.css'
 
 const suggestions = [
-  { label: 'Mumbai' },
-  { label: 'Bangalore' },
-  { label: 'Delhi' },
-  { label: 'Chennai' },
-  { label: 'Hydrabad' },
+  { value: 'MUMBAI', label: 'Mumbai' },
+  { value: 'CHENNAI', label: 'Chennai' },
+  { value: 'BENGALURU', label: 'Bengaluru'},
+  { value: 'DELHI', label: 'Delhi' },
+  { value: 'PUNE', label: 'Pune' },
 ].map(suggestion => ({
-  value: suggestion.label,
+  value: suggestion.value,
   label: suggestion.label,
 }));
 var localStor = require('local-storage');
@@ -37,7 +38,7 @@ class JobTemplateTable extends Component {
       bankDetails: [],
       searchInput: "",
       filteredData: [],
-      selectedEnd: [],
+      selectedEnd: [suggestions[0]],
       selected: {},
       selectAll: 0,
     }
@@ -45,18 +46,18 @@ class JobTemplateTable extends Component {
   }
 
 
-  toggleRow(bank_id) {
+  toggleRow(ifsc) {
     const newSelected = Object.assign({}, this.state.selected);
-    newSelected[bank_id] = !this.state.selected[bank_id];
+    newSelected[ifsc] = !this.state.selected[ifsc];
     this.setState({
       selected: newSelected,
       selectAll: 2
     }, () => {
-      if (this.state.selected[bank_id] === true) {
+      if (this.state.selected[ifsc] === true) {
         localStor('selectedbank', this.state.selected)
         localStor('selected', this.state.selectAll)
       }
-      else if (this.state.selected[bank_id] === false) {
+      else if (this.state.selected[ifsc] === false) {
         localStor.remove('selectedbank');
         localStor.remove('selected');
       }
@@ -71,7 +72,7 @@ class JobTemplateTable extends Component {
 
     if (this.state.selectAll === 0) {
       this.state.bankDetails.forEach(x => {
-        newSelected[x.bank_id] = true;
+        newSelected[x.ifsc] = true;
       });
     }
 
@@ -90,7 +91,8 @@ class JobTemplateTable extends Component {
 
   //Displaying details of all the bank
   AllBank() {
-    fetch(links.bankDetailsApi, {
+    // console.log(selectedEnd)
+    fetch(links.bankDetailsApi + `?city=${this.state.selectedEnd.value ? this.state.selectedEnd.value : suggestions[0].value}`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -129,7 +131,10 @@ class JobTemplateTable extends Component {
     this.setState({ searchInput });
   };
   handleChange = selectedEnd => {
-    this.setState({ selectedEnd });
+    this.setState({ selectedEnd },()=>{
+      // console.log(`List Value`,this.state.selectedEnd.value)
+      this.AllBank()
+    });
   };
 
   componentDidMount() {
@@ -192,32 +197,35 @@ class JobTemplateTable extends Component {
                   columns={
                     [
                       {
+                        Header: "Action",
                         Cell: ({ original }) => {
                           return (
-                            <input
-                              type="checkbox"
+                            <Checkbox
+                              // type="checkbox"
                               className="checkbox"
-                              checked={this.state.selected[original.bank_id] === true}
-                              onChange={() => this.toggleRow(original.bank_id)}
+                              indeterminate
+                              checked={this.state.selected[original.ifsc] === true}
+                              onChange={() => this.toggleRow(original.ifsc)}
                             />
                           );
                         },
-                        Header: x => {
-                          return (
-                            <input
-                              type="checkbox"
-                              className="checkbox"
-                              checked={this.state.selectAll === 1}
-                              ref={input => {
-                                if (input) {
-                                  input.indeterminate = this.state.selectAll === 2;
-                                }
-                              }}
-                              onChange={() => this.toggleSelectAll()}
-                            />
-                          );
-                        },
-                        width: 50,
+                        // Header: x => {
+                        //   return (
+                        //     <Checkbox
+                        //       // type="checkbox"
+                        //       className="checkbox"
+                        //       checked={this.state.selectAll === 1}
+                        //       indeterminate
+                        //       inputRef={input => {
+                        //         if (input) {
+                        //           input.indeterminate = this.state.selectAll === 2;
+                        //                    }
+                        //       }}
+                        //       onChange={() => this.toggleSelectAll()}
+                        //     />
+                        //   );
+                        // },
+                        width: 100,
                         foldable: true,
                       },
 
@@ -274,7 +282,7 @@ class JobTemplateTable extends Component {
                         .indexOf(filter.value.toLowerCase()) !== -1
                       : true;
                   }}
-                  pivotBy={["bank_name"]}
+                  // pivotBy={["bank_name"]}
 
                 />
 
